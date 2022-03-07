@@ -1,4 +1,4 @@
-package com.bragainfo.controller;
+package com.bragainfo.controller.initial;
 
 
 import com.bragainfo.HelloReq;

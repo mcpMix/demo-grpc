@@ -1,6 +1,8 @@
 package com.bragainfo.service.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import com.bragainfo.converter.ProductRequestDTOToProductConverter;
 import com.bragainfo.converter.ProductToProductResponseDTOConverter;
@@ -8,6 +10,7 @@ import com.bragainfo.converter.ProductsToProductResponseDTOListConverter;
 import com.bragainfo.domain.dto.ProductRequestDTO;
 import com.bragainfo.domain.dto.ProductResponseDTO;
 import com.bragainfo.domain.entity.Product;
+import com.bragainfo.exception.ProductAlreadyExistsException;
 import com.bragainfo.repository.ProductRepository;
 import com.bragainfo.service.ProductService;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,10 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductResponseDTO create(ProductRequestDTO product) {
+    if(Objects.isNull(product)){
+      return null;
+    }
+    ckeckDuplicity(product.getName());
     return productToProductResponseDTO.apply(productRepository.save(productRequestDTOToProduct.apply(product)));
   }
 
@@ -53,5 +60,9 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public List<ProductResponseDTO> findByNameIgnoreCase(String name) {
     return productsToProductResponseDTOList.apply(productRepository.findByNameIgnoreCase(name));
+  }
+
+  private void ckeckDuplicity(String name){
+    Optional.ofNullable(this.productRepository.findByNameIgnoreCase(name)).orElseThrow(()-> new ProductAlreadyExistsException(name));
   }
 }

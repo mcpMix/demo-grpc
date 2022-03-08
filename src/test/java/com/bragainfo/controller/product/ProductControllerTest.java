@@ -3,8 +3,6 @@ package com.bragainfo.controller.product;
 import com.bragainfo.ProductReq;
 import com.bragainfo.ProductRes;
 import com.bragainfo.ProductServiceGrpc;
-import com.bragainfo.domain.dto.ProductRequestDTO;
-import com.bragainfo.service.impl.ProductServiceImpl;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

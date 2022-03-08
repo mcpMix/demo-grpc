@@ -4,7 +4,7 @@ import io.grpc.Status;
 
 public class ProductAlreadyExistsException extends BaseBusinessException{
 
-  private static final String ERROR_MESSAGE = "Product % already exists";
+  private static final String ERROR_MESSAGE = "Product %s already exists.";
   private final String name;
 
   public ProductAlreadyExistsException(String name) {

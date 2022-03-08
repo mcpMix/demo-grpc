@@ -13,10 +13,14 @@ import com.bragainfo.domain.entity.Product;
 import com.bragainfo.exception.ProductAlreadyExistsException;
 import com.bragainfo.repository.ProductRepository;
 import com.bragainfo.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
 
   private final ProductRepository productRepository;
   private final ProductRequestDTOToProductConverter productRequestDTOToProduct;
@@ -34,12 +38,16 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public ProductResponseDTO create(ProductRequestDTO product) {
-    if(Objects.isNull(product)){
+  public ProductResponseDTO create(ProductRequestDTO productReqDTO) {
+    LOGGER.info("stage=init method=ProductServiceImpl.create message= Begin create product request={}", productReqDTO);
+    if(Objects.isNull(productReqDTO)){
       return null;
     }
-    ckeckDuplicity(product.getName());
-    return productToProductResponseDTO.apply(productRepository.save(productRequestDTOToProduct.apply(product)));
+    ckeckDuplicity(productReqDTO.getName());
+    ProductResponseDTO dtoResult = productToProductResponseDTO.apply(productRepository.save(productRequestDTOToProduct.apply(productReqDTO)));
+
+    LOGGER.info("stage=end method=ProductServiceImpl.create message= Finish create product response={}",dtoResult);
+    return dtoResult;
   }
 
   @Override
@@ -57,12 +65,11 @@ public class ProductServiceImpl implements ProductService {
     return productsToProductResponseDTOList.apply(productRepository.findAll());
   }
 
-  @Override
-  public List<ProductResponseDTO> findByNameIgnoreCase(String name) {
-    return productsToProductResponseDTOList.apply(productRepository.findByNameIgnoreCase(name));
-  }
 
   private void ckeckDuplicity(String name){
-    Optional.ofNullable(this.productRepository.findByNameIgnoreCase(name)).orElseThrow(()-> new ProductAlreadyExistsException(name));
+   this.productRepository.findByNameIgnoreCase(name)
+       .ifPresent(exp->{
+            throw new ProductAlreadyExistsException(name);
+        });
   }
 }

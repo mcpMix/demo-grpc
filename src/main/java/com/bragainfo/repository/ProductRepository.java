@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long> {
 
-  Iterable<Product> findByNameIgnoreCase(String nome);
+  Optional<Product> findByNameIgnoreCase(String nome);
 
 }

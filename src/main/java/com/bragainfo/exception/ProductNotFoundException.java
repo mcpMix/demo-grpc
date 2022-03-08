@@ -4,7 +4,7 @@ import io.grpc.Status;
 
 public class ProductNotFoundException extends BaseBusinessException{
 
-  private static final String ERROR_MESSAGE = "Product % already exists";
+  private static final String ERROR_MESSAGE = "Product %s already exists";
   private final Long id;
 
   public ProductNotFoundException(Long id) {

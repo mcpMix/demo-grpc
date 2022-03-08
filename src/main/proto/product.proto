@@ -3,31 +3,29 @@ syntax = "proto3";
 option java_package ="com.bragainfo";
 option java_multiple_files =true;
 
-import "google/protobuf/timestamp.proto";
-
 package com.bragainfo;
 
 service ProductService{
-  rpc Create(PersonReq) returns (PersonRes);
-  rpc FindById(FindById) returns (PersonRes);
-  rpc Delete(FindById) returns (PersonRes);
+  rpc Create(ProductReq) returns (ProductRes);
+  rpc FindById(Id) returns (ProductRes);
+  rpc Delete(Id) returns (ProductRes);
   rpc FindAll(EmptyReq) returns(ProductRespList);
 
 }
 
 message ProductRespList{
-  repeated PersonRes products =1;
+  repeated ProductReq products =1;
 }
 message  EmptyReq{
 }
 
-message PersonReq{
+message ProductReq{
   string name = 1;
   double price = 2;
   int32  quantity_in_stock = 3;
 }
 
-message  PersonRes{
+message  ProductRes{
   int64 id = 1;
   string name = 2;
   double price = 3;
@@ -38,8 +36,6 @@ message  PersonRes{
 
 }
 
-
-
-message  FindById{
+message  Id{
   int64 id =1;
 }

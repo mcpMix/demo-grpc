@@ -11,7 +11,9 @@ import java.util.function.Function;
 
 import com.bragainfo.domain.dto.ProductResponseDTO;
 import com.bragainfo.domain.entity.Product;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductToProductResponseDTOConverter implements Function<Product, ProductResponseDTO> {
   public static final String PATTERN_ISO_DATE_TIME = "yyyyMMddHHmmss";
 

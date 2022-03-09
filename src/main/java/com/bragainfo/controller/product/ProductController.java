@@ -1,9 +1,7 @@
 package com.bragainfo.controller.product;
 
 import com.bragainfo.EmptyReq;
-import com.bragainfo.HelloRes;
 import com.bragainfo.Id;
-import com.bragainfo.Product;
 import com.bragainfo.ProductReq;
 import com.bragainfo.ProductRes;
 import com.bragainfo.ProductRespList;
@@ -50,12 +48,28 @@ public class ProductController extends ProductServiceGrpc.ProductServiceImplBase
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
-    LOGGER.info("stage=end method=ProductController.create mssage= Finish create product response={} ");
+    LOGGER.info("stage=end method=ProductController.create message= Finish create product response={} ");
   }
 
   @Override
   public void findById(Id request, StreamObserver<ProductRes> responseObserver) {
-    super.findById(request, responseObserver);
+    LOGGER.info("stage=init method=ProductController.findById message= Begin find by id={}", request.getId());
+    ProductResponseDTO productResponseDTO = productService.findById(request.getId());
+
+    ProductRes response = ProductRes.newBuilder()
+        .setId(productResponseDTO.getId())
+        .setName(productResponseDTO.getName())
+        .setPrice(productResponseDTO.getPrice())
+        .setQuantityInStock(productResponseDTO.getQuantityInStock())
+        .setCreateAt(productResponseDTO.getCreateAt())
+        .setUpdatedAt(productResponseDTO.getUpdateAt())
+        .setVersion(productResponseDTO.getVersion())
+        .build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+
+    LOGGER.info("stage=end method=ProductController.findById message= Finish find by product");
   }
 
   @Override

@@ -1,8 +1,12 @@
 package com.bragainfo.controller.product;
 
+import static org.assertj.core.groups.Tuple.tuple;
+
+import com.bragainfo.EmptyReq;
 import com.bragainfo.Id;
 import com.bragainfo.ProductReq;
 import com.bragainfo.ProductRes;
+import com.bragainfo.ProductRespList;
 import com.bragainfo.ProductServiceGrpc;
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -77,6 +81,43 @@ public class ProductControllerTest {
     Assertions.assertThatExceptionOfType(StatusRuntimeException.class)
         .isThrownBy(()->serviceBlockingStub.findById(id))
         .withMessage("NOT_FOUND: Product id=5 not found");
+
+  }
+
+  @Test
+  public void deleteByIdSuccessTest(){
+    Id id = Id.newBuilder().setId(1L).build();
+
+    Assertions.assertThatNoException().isThrownBy(()->serviceBlockingStub.delete(id));
+  }
+
+  @Test
+  public void deleteByIdProductNotFoundExceptionTest(){
+    Id id = Id.newBuilder().setId(200L).build();
+
+    Assertions.assertThatExceptionOfType(StatusRuntimeException.class)
+        .isThrownBy(()->serviceBlockingStub.delete(id))
+        .withMessage("NOT_FOUND: Product id=200 not found");
+
+  }
+
+  @Test
+  public void findAllProductSuccessTest(){
+    EmptyReq empty = EmptyReq.newBuilder().build();
+
+    ProductRespList productRes = serviceBlockingStub.findAll(empty);
+
+    //Use only by example
+    Assertions.assertThat(productRes).isInstanceOf(ProductRespList.class);
+
+    Assertions.assertThat(productRes.getProductsCount()).isEqualTo(2);
+
+    Assertions.assertThat(productRes.getProductsList())
+        .extracting("id","name", "price","quantityInStock")
+        .contains(
+            tuple(1L,"Product A", 10.99, 10),
+            tuple(2L,"Product B", 10.99, 10)
+        );
 
   }
 

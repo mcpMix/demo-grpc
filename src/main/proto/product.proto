@@ -14,7 +14,7 @@ service ProductService{
 }
 
 message ProductRespList{
-  repeated ProductReq products =1;
+  repeated ProductRes products =1;
 }
 message  EmptyReq{
 }

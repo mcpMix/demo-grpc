@@ -1,11 +1,14 @@
 package com.bragainfo.service;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.bragainfo.converter.ProductRequestDTOToProductConverter;
@@ -113,6 +116,31 @@ public class ProductServiceImplTest {
 
      assertThatExceptionOfType(ProductNotFoundException.class)
         .isThrownBy(()->service.findById(id));
+  }
+
+  @Test
+  public void whenProductGetAllSuccess(){
+
+    List<Product> products  =  new ArrayList<>();
+    products.add(loadProduct());
+
+    List<ProductResponseDTO> productResponseDTOList = new ArrayList<>();
+    productResponseDTOList.add(loadProductResDTO());
+
+    when(productRepository.findAll()).thenReturn(products);
+    when(productsToProductResponseDTOList.apply(ArgumentMatchers.any())).thenReturn(productResponseDTOList);
+
+
+    List<ProductResponseDTO> response = service.findAll();
+
+    Assertions.assertThat(response)
+        .extracting("id","name", "price","quantityInStock")
+        .contains(
+            tuple(1L,"Nome Test Um",20.00,20)
+        );
+
+    verify(productsToProductResponseDTOList,times(1)).apply(ArgumentMatchers.any());
+
   }
 
   private Product loadProduct() {

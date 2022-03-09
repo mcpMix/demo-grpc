@@ -1,5 +1,8 @@
 package com.bragainfo.controller.product;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.bragainfo.EmptyReq;
 import com.bragainfo.EmptyRes;
 import com.bragainfo.Id;
@@ -88,7 +91,24 @@ public class ProductController extends ProductServiceGrpc.ProductServiceImplBase
   @Override
   public void findAll(EmptyReq request, StreamObserver<ProductRespList> responseObserver) {
     LOGGER.info("stage=init method=ProductController.findAll message= Begin find all product.");
+    List<ProductResponseDTO> dtoList = productService.findAll();
 
+    List<ProductRes> responseList = dtoList.stream()
+            .map(prod->ProductRes.newBuilder()
+                .setId(prod.getId())
+                .setName(prod.getName())
+                .setPrice(prod.getPrice())
+                .setQuantityInStock(prod.getQuantityInStock())
+                .setCreateAt(prod.getCreateAt())
+                .setUpdatedAt(prod.getUpdateAt())
+                .setVersion(prod.getVersion())
+                .build())
+                .collect(Collectors.toList());
+
+    ProductRespList response = ProductRespList.newBuilder().addAllProducts(responseList).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
     LOGGER.info("stage=end method=ProductController.findAll message= Finish find all product.");
   }
 }

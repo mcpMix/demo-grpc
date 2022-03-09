@@ -4,8 +4,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import com.bragainfo.converter.ProductRequestDTOToProductConverter;
 import com.bragainfo.converter.ProductToProductResponseDTOConverter;

@@ -19,6 +19,8 @@ import com.bragainfo.repository.ProductRepository;
 import com.bragainfo.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,7 +71,9 @@ public class ProductServiceImpl implements ProductService {
   public void delete(Long id) {
     LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin delete by product id={}", id);
     if(nonNull(id)){
-      productRepository.deleteById(id);
+      Product product = this.productRepository.findById(id)
+          .orElseThrow(() -> new ProductNotFoundException(id));
+      productRepository.delete(product);
     }
     LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish delete by product id.");
   }
@@ -77,7 +81,8 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public List<ProductResponseDTO> findAll() {
     LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin find all.");
-    List<ProductResponseDTO> listResponse = productsToProductResponseDTOList.apply(productRepository.findAll());
+    List<ProductResponseDTO> listResponse = productsToProductResponseDTOList.apply(productRepository.findAll(
+        Sort.by(Direction.DESC, "id")));
     LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish fnd all size={}",listResponse.size());
     return listResponse;
   }

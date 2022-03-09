@@ -8,7 +8,7 @@ package com.bragainfo;
 service ProductService{
   rpc Create(ProductReq) returns (ProductRes);
   rpc FindById(Id) returns (ProductRes);
-  rpc Delete(Id) returns (ProductRes);
+  rpc Delete(Id) returns (EmptyRes);
   rpc FindAll(EmptyReq) returns(ProductRespList);
 
 }
@@ -17,6 +17,9 @@ message ProductRespList{
   repeated ProductReq products =1;
 }
 message  EmptyReq{
+}
+
+message  EmptyRes{
 }
 
 message ProductReq{

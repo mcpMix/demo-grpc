@@ -56,29 +56,29 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductResponseDTO findById(Long id) {
-    LOGGER.info("stage=init method=ProductServiceImpl.findById message= Begin find by id product request={}", id);
+    LOGGER.info("stage=init method=ProductServiceImpl.findById message= Begin find by product id={}", id);
     if(isNull(id)){
       return null;
     }
     Product product = productRepository.findById(id).orElseThrow(()->new ProductNotFoundException(id));
-    LOGGER.info("stage=end method=ProductServiceImpl.findById message= Finish find by id product response={}",product);
+    LOGGER.info("stage=end method=ProductServiceImpl.findById message= Finish find by product id response={}",product);
     return productToProductResponseDTO.apply(product);
   }
 
   @Override
   public void delete(Long id) {
-    LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin delete by id product request={}", id);
+    LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin delete by product id={}", id);
     if(nonNull(id)){
-      productRepository.delete(new Product().withId(id));
+      productRepository.deleteById(id);
     }
-    LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish delete by id product.");
+    LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish delete by product id.");
   }
 
   @Override
   public List<ProductResponseDTO> findAll() {
     LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin find all.");
     List<ProductResponseDTO> listResponse = productsToProductResponseDTOList.apply(productRepository.findAll());
-    LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish fnd all response={} size",listResponse.size());
+    LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish fnd all size={}",listResponse.size());
     return listResponse;
   }
 

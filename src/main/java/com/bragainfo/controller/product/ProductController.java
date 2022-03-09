@@ -1,6 +1,7 @@
 package com.bragainfo.controller.product;
 
 import com.bragainfo.EmptyReq;
+import com.bragainfo.EmptyRes;
 import com.bragainfo.Id;
 import com.bragainfo.ProductReq;
 import com.bragainfo.ProductRes;
@@ -73,12 +74,21 @@ public class ProductController extends ProductServiceGrpc.ProductServiceImplBase
   }
 
   @Override
-  public void delete(Id request, StreamObserver<ProductRes> responseObserver) {
-    super.delete(request, responseObserver);
+  public void delete(Id request, StreamObserver<EmptyRes> responseObserver) {
+    LOGGER.info("stage=init method=ProductController.delete message= Begin delete id={}", request.getId());
+
+    productService.delete(request.getId());
+    EmptyRes response = EmptyRes.newBuilder().build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+
+    LOGGER.info("stage=end method=ProductController.delete message= Finish delete product");
   }
 
   @Override
   public void findAll(EmptyReq request, StreamObserver<ProductRespList> responseObserver) {
-    super.findAll(request, responseObserver);
+    LOGGER.info("stage=init method=ProductController.findAll message= Begin find all product.");
+
+    LOGGER.info("stage=end method=ProductController.findAll message= Finish find all product.");
   }
 }

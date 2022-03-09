@@ -16,6 +16,7 @@ import com.bragainfo.domain.dto.ProductResponseDTO;
 import com.bragainfo.domain.entity.DateModel;
 import com.bragainfo.domain.entity.Product;
 import com.bragainfo.exception.ProductAlreadyExistsException;
+import com.bragainfo.exception.ProductNotFoundException;
 import com.bragainfo.repository.ProductRepository;
 import com.bragainfo.service.impl.ProductServiceImpl;
 import org.assertj.core.api.Assertions;
@@ -80,8 +81,43 @@ public class ProductServiceImplTest {
 
   }
 
+  @Test
+  public void whenProductGetByIdSuccess(){
+
+    Product productResponse = loadProduct();
+    ProductResponseDTO productResponseDTO = loadProductResDTO();
+    Long id = 1L;
+
+    when(productRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(productResponse));
+    when(productToProductResponseDTO.apply(ArgumentMatchers.any())).thenReturn(productResponseDTO);
+
+
+    ProductResponseDTO response = service.findById(id);
+
+    Assertions.assertThat(response)
+        .usingRecursiveComparison()
+        .comparingOnlyFields("id","name", "price","quantityInStock")
+        .ignoringFieldsOfTypes()
+        .ignoringActualNullFields()
+        .isEqualTo(productResponse);
+
+    verify(productToProductResponseDTO,times(1)).apply(ArgumentMatchers.any());
+
+  }
+
+  @Test
+  public void whenProductFindByIdErrorProductNotFound(){
+    Long id = 1L;
+
+    when(productRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.empty());
+
+     assertThatExceptionOfType(ProductNotFoundException.class)
+        .isThrownBy(()->service.findById(id));
+  }
+
   private Product loadProduct() {
     Product product = new Product()
+        .withId(1L)
         .withName("Nome Test Um")
         .withPrice(20.00)
         .withQuantityInStock(20);
@@ -99,6 +135,7 @@ public class ProductServiceImplTest {
 
   private ProductResponseDTO loadProductResDTO() {
     return new ProductResponseDTO()
+        .withId(1L)
         .withName("Nome Test Um")
         .withPrice(20.00)
         .withQuantityInStock(20);

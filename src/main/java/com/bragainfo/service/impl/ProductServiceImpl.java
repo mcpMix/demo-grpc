@@ -1,5 +1,8 @@
 package com.bragainfo.service.impl;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,6 +14,7 @@ import com.bragainfo.domain.dto.ProductRequestDTO;
 import com.bragainfo.domain.dto.ProductResponseDTO;
 import com.bragainfo.domain.entity.Product;
 import com.bragainfo.exception.ProductAlreadyExistsException;
+import com.bragainfo.exception.ProductNotFoundException;
 import com.bragainfo.repository.ProductRepository;
 import com.bragainfo.service.ProductService;
 import org.slf4j.Logger;
@@ -40,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ProductResponseDTO create(ProductRequestDTO productReqDTO) {
     LOGGER.info("stage=init method=ProductServiceImpl.create message= Begin create product request={}", productReqDTO);
-    if(Objects.isNull(productReqDTO)){
+    if(isNull(productReqDTO)){
       return null;
     }
     ckeckDuplicity(productReqDTO.getName());
@@ -52,17 +56,30 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductResponseDTO findById(Long id) {
-    return productToProductResponseDTO.apply(productRepository.findById(id).orElse(new Product()));
+    LOGGER.info("stage=init method=ProductServiceImpl.findById message= Begin find by id product request={}", id);
+    if(isNull(id)){
+      return null;
+    }
+    Product product = productRepository.findById(id).orElseThrow(()->new ProductNotFoundException(id));
+    LOGGER.info("stage=end method=ProductServiceImpl.findById message= Finish find by id product response={}",product);
+    return productToProductResponseDTO.apply(product);
   }
 
   @Override
   public void delete(Long id) {
-    productRepository.delete(new Product().withId(id));
+    LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin delete by id product request={}", id);
+    if(nonNull(id)){
+      productRepository.delete(new Product().withId(id));
+    }
+    LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish delete by id product.");
   }
 
   @Override
   public List<ProductResponseDTO> findAll() {
-    return productsToProductResponseDTOList.apply(productRepository.findAll());
+    LOGGER.info("stage=init method=ProductServiceImpl.delete message= Begin find all.");
+    List<ProductResponseDTO> listResponse = productsToProductResponseDTOList.apply(productRepository.findAll());
+    LOGGER.info("stage=end method=ProductServiceImpl.delete message= Finish fnd all response={} size",listResponse.size());
+    return listResponse;
   }
 
 

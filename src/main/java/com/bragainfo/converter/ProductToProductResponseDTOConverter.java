@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProductToProductResponseDTOConverter implements Function<Product, ProductResponseDTO> {
-  public static final String PATTERN_ISO_DATE_TIME = "yyyyMMddHHmmss";
+  public static final String PATTERN_ISO_DATE_TIME = "dd/MM/yyyy HH:mm:ss";
 
   @Override
   public ProductResponseDTO apply(Product product) {

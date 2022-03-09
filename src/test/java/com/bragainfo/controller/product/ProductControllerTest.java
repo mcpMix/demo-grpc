@@ -1,5 +1,6 @@
 package com.bragainfo.controller.product;
 
+import com.bragainfo.Id;
 import com.bragainfo.ProductReq;
 import com.bragainfo.ProductRes;
 import com.bragainfo.ProductServiceGrpc;
@@ -33,11 +34,7 @@ public class ProductControllerTest {
 
   @Test
   public void createProductSuccessTest(){
-    ProductReq productReq =  ProductReq.newBuilder()
-        .setName("Cerveja")
-        .setPrice(200.00)
-        .setQuantityInStock(20)
-        .build();
+    ProductReq productReq = loadProductReqNewMock();
 
     ProductRes productRes = serviceBlockingStub.create(productReq);
 
@@ -49,18 +46,57 @@ public class ProductControllerTest {
   }
 
   @Test
-  public void createProductAlreadyExistsExceptionTest(){
-    ProductReq productReq =  ProductReq.newBuilder()
-        .setName("Product A")
-        .setPrice(200.00)
-        .setQuantityInStock(20)
-        .build();
+  public void findByIdProductSuccessTest(){
+    Id id = Id.newBuilder().setId(1L).build();
 
+    ProductReq productReq = loadProductReqMock();
+
+    ProductRes productRes = serviceBlockingStub.findById(id);
+
+    Assertions.assertThat(productReq)
+        .usingRecursiveComparison()
+        .comparingOnlyFields("name","price","quantity_in_stock")
+        .isEqualTo(productRes);
+
+  }
+
+  @Test
+  public void createProductAlreadyExistsExceptionTest(){
+    ProductReq productReq = loadProductReqMock();
 
     Assertions.assertThatExceptionOfType(StatusRuntimeException.class)
         .isThrownBy(()->serviceBlockingStub.create(productReq))
         .withMessage("ALREADY_EXISTS: Product Product A already exists.");
 
+  }
+
+  @Test
+  public void findByIdProductNotFoundExceptionTest(){
+    Id id = Id.newBuilder().setId(5L).build();
+
+    Assertions.assertThatExceptionOfType(StatusRuntimeException.class)
+        .isThrownBy(()->serviceBlockingStub.findById(id))
+        .withMessage("NOT_FOUND: Product id=5 not found");
+
+  }
+
+
+  private ProductReq loadProductReqMock() {
+    ProductReq productReq =  ProductReq.newBuilder()
+        .setName("Product A")
+        .setPrice(10.99)
+        .setQuantityInStock(10)
+        .build();
+    return productReq;
+  }
+
+  private ProductReq loadProductReqNewMock() {
+    ProductReq productReq =  ProductReq.newBuilder()
+        .setName("Product NEW")
+        .setPrice(10.99)
+        .setQuantityInStock(10)
+        .build();
+    return productReq;
   }
 
 }
